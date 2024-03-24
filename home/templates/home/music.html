@@ -6,6 +6,47 @@
     <title>Musics</title>
 </head>
 <body>
-    <h1> Search for a song</h1>
+    <main>
+        <!-- Search form -->
+        <section>
+            <h2>Search for a Song</h2>
+            <form action="{% url 'search_song' %}" method="GET">
+                <input type="text" name="query" placeholder="Enter song title or artist">
+                <button type="submit">Search</button>
+            </form>
+        </section>
+    
+        {% if search_results %}
+        <!-- Display search results -->
+        <section>
+            <h2>Search Results</h2>
+            <div>
+                <img src="{{ search_results.0.image_url }}" alt="{{ search_results.0.title }}" width="200">
+                <p>Title: {{ search_results.0.title }}</p>
+                <p>Artist: {{ search_results.0.artist }}</p>
+                <p>Duration: {{ search_results.0.duration }}</p>
+            </div>
+        </section>
+        {% endif %}
+    
+        {% if song_recommendations %}
+        <!-- Display Song recommendations -->
+        <section>
+            <h2>Song Recommendations</h2>
+            <ul>
+                {% for rec in song_recommendations %}
+                <li>
+                    {% if rec.image_url %}
+                        <img src="{{ rec.image_url }}" alt="{{ rec.title }}" width="200">
+                    {% endif %}
+                    <p>Title: {{ rec.title }}</p>
+                    <p>Artist: {{ rec.artist }}</p>
+                    <p>Duration: {{ rec.duration }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+    </main>
 </body>
 </html>
