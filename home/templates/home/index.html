@@ -1,16 +1,23 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    <link href="{% static 'home/css/style.css' %}" rel="stylesheet" />
+    <link rel="shortcut icon" href="{% static 'home/images/logo.png' %}" type="">
 </head>
+
 <body>
-    <h1>Welcome to MusicReco!</h1>
-    <div>
-        <a href="{% url 'music' %}"><button>Music</button></a>
-        <a href="{% url 'artist' %}"><button>Artist</button></a>
-        <a href="{% url 'genre' %}"><button>Genre</button></a>
+    <div class="home">
+        <p class="white-text">Welcome to MusicReco!</p>
+        <div>
+            <a href="{% url 'music' %}"><button>Music</button></a>
+            <a href="{% url 'artist' %}"><button>Artist</button></a>
+            <a href="{% url 'genre' %}"><button>Genre</button></a>
+        </div>
     </div>
 </body>
 </html>
