@@ -1,12 +1,100 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>artists</title>
+    <title>Spotify Midterms</title>
+    {% load static %}
 </head>
 <body>
-    <h1> Search For an artists</h1>
-    
+
+        <div>
+            <ul>
+            
+                <li>
+                    <form id="searchForm" action="{% url 'artist' %}" method="GET">
+                        {% csrf_token %}
+                        <input id="searchInput" type="text" name="artist_name" placeholder="Search artist">
+                        <button type="submit"><span class="fa fa-search"></span> <span>Search</span></button>
+                    </form>
+                </li>
+        </div>
+
+        
+
+    <div>
+        <div {% if data %} style="display: block;"{% endif %}>
+            {% if data %}
+            <div>
+                <ul>
+                    {% for artist in data %}
+                    <li>
+                        <div>
+                            <a href="#" onclick="showArtistDetails('{{ artist.id }}'); return false;">
+                                {% if artist.images %}
+                                <img src="{{ artist.images.0.url }}" alt="{{ artist.name }}">
+                                {% else %}
+                                <img src="{% static 'home/images/default-artist.jpg' %}" alt="{{ artist.name }}">
+                                {% endif %}
+                                <div>
+                                    <span class="fa fa-play"></span>
+                                </div>
+                                <div>
+                                    <h4>{{ artist.name }}</h4>
+                                    <p>Followers: {{ artist.followers_count }}</p>
+                                    <p>Popularity: {{ artist.popularity }}</p>
+                                    <p>Genres: {{ artist.genres|join:", " }}</p>
+                                </div>
+                            </a>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% else %}
+            <div>
+                <p>No results found.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://kit.fontawesome.com/23cecef777.js" crossorigin="anonymous"></script>
+    <script>
+        function showArtistDetails(artistId) {
+            // Fetch artist details from Spotify API
+            fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer YOUR_ACCESS_TOKEN'  // Replace with your access token
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update HTML elements with artist details
+                document.getElementById(`followers_${artistId}`).innerText = `Followers: ${data.followers.total}`;
+                document.getElementById(`popularity_${artistId}`).innerText = `Popularity: ${data.popularity}`;
+                // Fetch genres separately
+                fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer BQCL0NFcWkp2L8R1PKnwCsaeex66cXyuxu5oB_hduEriLzDTn86y5IwIBGNkDZqu3JISlmrZjG4QzgmYTkB2yuAi9_li2HMKHvukz8qW1hnflY8w6pY'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Update HTML element with genres
+                    document.getElementById(`genres_${artistId}`).innerText = `Genres: ${data.genres.join(', ')}`;
+                })
+                .catch(error => {
+                    console.error('Error fetching artist genres:', error);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching artist details:', error);
+            });
+        }
+    </script>
 </body>
 </html>

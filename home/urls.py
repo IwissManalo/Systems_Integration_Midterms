@@ -8,4 +8,5 @@ urlpatterns = [
     path('music/', views.music, name='music'),  # Add URL pattern for Music
     path('artist/', views.artist, name='artist'),  # Add URL pattern for Artist
     path('genre/', views.genre, name='genre'),  # Add URL pattern for Genre
+    
 ]
