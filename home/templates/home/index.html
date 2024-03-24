@@ -12,12 +12,18 @@
 
 <body>
     <div class="home">
-        <p class="white-text">Welcome to MusicReco!</p>
-        <div>
-            <a href="{% url 'music' %}"><button>Music</button></a>
-            <a href="{% url 'artist' %}"><button>Artist</button></a>
-            <a href="{% url 'genre' %}"><button>Genre</button></a>
-        </div>
+        <img src="{% static 'home/images/logo.png' %}" alt="Image" class="home-image">
+
+        <p class="home-title">Music Recommendation</p>
+        <div class="home-buttons">
+            <a href="{% url 'music' %}" class="spotify-button">Music</a>
+            <a href="{% url 'artist' %}" class="spotify-button">Artist</a>
+            <a href="{% url 'genre' %}" class="spotify-button">Genre</a>
+        </div>        
     </div>
+
+    <footer>
+        <p class="footer-text">Powered by InfoTech Alliance</p>
+    </footer>
 </body>
 </html>
