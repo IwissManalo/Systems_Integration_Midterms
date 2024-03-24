@@ -6,6 +6,38 @@
     <title>Genres</title>
 </head>
 <body>
-    <h1> Please choose a Genre </h1>
+    <h1>Please choose a Genre</h1>
+    <div id="genres"></div>
+
+    <script>
+        // Your Spotify access token
+        var accessToken = "BQBSmTiotKHFXPkpXdLrhdzovx0F6tTn0zoGbvOA4BOj_DJXHQCcFVFa6ff62ZdNPcD19fJtlcQtfc4gLF6DoZM1VrKFUMRWEn7U9C0rdsRx5pehc_Y";
+
+        // Fetch genres data using Spotify API
+        fetch('https://api.spotify.com/v1/browse/categories?limit=20', {
+            headers: {
+                'Authorization': 'Bearer ' + accessToken
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Access the genres container
+            var genresContainer = document.getElementById('genres');
+
+            // Generate HTML for each genre and append to the container
+            data.categories.items.forEach(function(genre) {
+                var genreHTML = `
+                    <div>
+                        <a href="${genre.href}">
+                            <img src="${genre.icons[0].url}" alt="${genre.name}">
+                            <p>${genre.name}</p>
+                        </a>
+                    </div>
+                `;
+                genresContainer.innerHTML += genreHTML;
+            });
+        })
+        .catch(error => console.error('Error fetching genres:', error));
+    </script>
 </body>
 </html>
