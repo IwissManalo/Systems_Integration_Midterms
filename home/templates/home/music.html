@@ -4,6 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Musics</title>
+    <style>
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <main>
@@ -15,16 +52,39 @@
                 <button type="submit">Search</button>
             </form>
         </section>
+
+        {% if not search_results %}
+        <!-- Song Recommendations (if no search results) -->
+        <section>
+            <h2>Songs you might know</h2>
+            <div id="song-recommendations">
+                {% for rec in song_recommendations %}
+                <button class="song-button" data-title="{{ rec.title }}" data-image="{{ rec.image_url }}">
+                    {% if rec.image_url %}
+                        <img src="{{ rec.image_url }}" alt="{{ rec.title }}" width="200">
+                    {% endif %}
+                    <p>Title: {{ rec.title }}</p>
+                    <p>Artist: {{ rec.artist }}</p>
+                    <p>Duration: {{ rec.duration }}</p>
+                </button>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
     
         {% if search_results %}
         <!-- Display search results -->
         <section>
             <h2>Search Results</h2>
-            <div>
-                <img src="{{ search_results.0.image_url }}" alt="{{ search_results.0.title }}" width="200">
-                <p>Title: {{ search_results.0.title }}</p>
-                <p>Artist: {{ search_results.0.artist }}</p>
-                <p>Duration: {{ search_results.0.duration }}</p>
+            <div id="search-results">
+                {% for song in search_results %}
+                <button class="song-button" data-title="{{ song.title }}" data-image="{{ song.image_url }}">
+                    <img src="{{ song.image_url }}" alt="{{ song.title }}" width="200">
+                    <p>Title: {{ song.title }}</p>
+                    <p>Artist: {{ song.artist }}</p>
+                    <p>Duration: {{ song.duration }}</p>
+                </button>
+                {% endfor %}
             </div>
         </section>
         {% endif %}
@@ -33,20 +93,78 @@
         <!-- Display Song recommendations -->
         <section>
             <h2>Song Recommendations</h2>
-            <ul>
+            <div id="song-recommendations">
                 {% for rec in song_recommendations %}
-                <li>
+                <button class="song-button" data-title="{{ rec.title }}" data-image="{{ rec.image_url }}">
                     {% if rec.image_url %}
                         <img src="{{ rec.image_url }}" alt="{{ rec.title }}" width="200">
                     {% endif %}
                     <p>Title: {{ rec.title }}</p>
                     <p>Artist: {{ rec.artist }}</p>
                     <p>Duration: {{ rec.duration }}</p>
-                </li>
+                </button>
                 {% endfor %}
-            </ul>
+            </div>
         </section>
         {% endif %}
     </main>
+
+    <!-- Modal -->
+<div id="songCoverModal" class="modal">
+    <center>
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div class="song-details">
+            <img id="modalImg" src="" alt="Song Cover" class="img-fluid">
+            <div class="song-info">
+                <p id="modalTitle"></p>
+                <p id="modalArtist"></p>
+                <p id="modalDuration"></p>
+            </div>
+        </div>
+    </div></center>
+</div>
+
+<script>
+    // Get the modal element
+    var modal = document.getElementById("songCoverModal");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on a song button, open the modal
+    var songButtons = document.querySelectorAll('.song-button');
+    songButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            var imgSrc = this.getAttribute('data-image');
+            var songInfo = this.querySelectorAll('p');
+            var title = songInfo[0].textContent.replace('Title: ', '');
+            var artist = songInfo[1].textContent.replace('Artist: ', '');
+            var duration = songInfo[2].textContent.replace('Duration: ', '');
+
+            document.getElementById('modalImg').src = imgSrc;
+            document.getElementById('modalTitle').textContent = "Title: " + title;
+            document.getElementById('modalArtist').textContent = "Artist: " + artist;
+            document.getElementById('modalDuration').textContent = "Duration: " + duration;
+
+            modal.style.display = "block";
+        });
+    });
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    };
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    };
+</script>
+
+
 </body>
 </html>
+

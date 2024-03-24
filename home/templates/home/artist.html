@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,45 +19,65 @@
                     </form>
                 </li>
         </div>
+      
 
-        
-
-    <div>
-        <div {% if data %} style="display: block;"{% endif %}>
-            {% if data %}
+        <!-- artist.html -->
+<div>
+    <div {% if data %} style="display: block;"{% endif %}>
+        {% if data %}
             <div>
                 <ul>
                     {% for artist in data %}
-                    <li>
-                        <div>
-                            <a href="#" onclick="showArtistDetails('{{ artist.id }}'); return false;">
-                                {% if artist.images %}
-                                <img src="{{ artist.images.0.url }}" alt="{{ artist.name }}">
-                                {% else %}
-                                <img src="{% static 'home/images/default-artist.jpg' %}" alt="{{ artist.name }}">
-                                {% endif %}
-                                <div>
-                                    <span class="fa fa-play"></span>
-                                </div>
-                                <div>
-                                    <h4>{{ artist.name }}</h4>
-                                    <p>Followers: {{ artist.followers_count }}</p>
-                                    <p>Popularity: {{ artist.popularity }}</p>
-                                    <p>Genres: {{ artist.genres|join:", " }}</p>
-                                </div>
-                            </a>
-                        </div>
-                    </li>
+                        <li>
+                            <div>
+                                <a href="#" onclick="showArtistDetails('{{ artist.id }}'); return false;">
+                                    {% if artist.images %}
+                                        <img src="{{ artist.images.0.url }}" alt="{{ artist.name }}">
+                                    {% else %}
+                                        <img src="{% static 'home/images/default-artist.jpg' %}" alt="{{ artist.name }}">
+                                    {% endif %}
+                                    <div>
+                                        <span class="fa fa-play"></span>
+                                    </div>
+                                    <div>
+                                        <h4>{{ artist.name }}</h4>
+                                        <p>Followers: {{ artist.followers_count }}</p>
+                                        <p>Popularity: {{ artist.popularity }}</p>
+                                        <p>Genres: {{ artist.genres|join:", " }}</p>
+                                        <!-- Add a section for top tracks -->
+                                        <div>
+                                            <h4>Top Tracks:</h4>
+                                            <ul>
+                                                {% for track in artist.top_tracks %}
+                                                    <li>
+                                                        {% if track.image_url %}
+                                                            <img src="{{ track.image_url }}" alt="{{ track.name }}" style="float:left; margin-right:10px;" width="50">
+                                                        {% else %}
+                                                            <img src="{% static 'home/images/default-track.jpg' %}" alt="{{ track.name }}" style="float:left; margin-right:10px;" width="50">
+                                                        {% endif %}
+                                                        <div>{{ track.name }}</div>
+                                                        <div style="clear:both;"></div> <!-- Clear float -->
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </li>
                     {% endfor %}
                 </ul>
             </div>
-            {% else %}
+        {% else %}
             <div>
                 <p>No results found.</p>
             </div>
-            {% endif %}
-        </div>
+        {% endif %}
     </div>
+</div>
+
+
+
 
     <script src="https://kit.fontawesome.com/23cecef777.js" crossorigin="anonymous"></script>
     <script>
