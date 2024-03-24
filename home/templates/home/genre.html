@@ -4,6 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genres</title>
+    <style>
+        .genre-row, .playlist-row {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .genre-item, .playlist-item, .recommendation-item {
+            text-align: center;
+            flex: 1;
+            margin: 0 5px;
+        }
+        .genre-item img, .playlist-item img, .recommendation-item img {
+            max-width: 300%; 
+            max-height: 300px; 
+        }
+    </style>
 </head>
 <body>
     <h1>Please choose a Genre</h1>
@@ -15,24 +31,31 @@
     <div id="relatedContent"></div>
 
     <script>
-        var accessToken = "BQCYTAE2fLq79jwy5j__oTV8LNhbiZ33sJLI5ZUIwzt1okQyfKLcgXmfKqZqZFk1tCEU8q7V_Nt2h8ZCkFgBY_Xlx5hSYOSQHXid_FkHqNSQyAvJyuA";
+        var accessToken = "BQBvRB-AWNMLRHzNrQJ0YntpkVvGshF8EvtIOOaPnKAXW5tOPpaxyP7FZ3UVZmPcEkWljCE11D7EqGxYEkSBflbTmP85R0TH81HdA7dYxzlhMhOmDvk";
 
         var isSearchPerformed = false;
 
         function renderGenres(genres) {
             var genresContainer = document.getElementById('genres');
             genresContainer.innerHTML = ''; 
-            genres.forEach(function(genre) {
-                var genreHTML = `
-                    <div>
+            var genreRowsHTML = '';
+            var genreRow = '<div class="genre-row">';
+            genres.forEach(function(genre, index) {
+                if (index % 5 === 0 && index !== 0) {
+                    genreRowsHTML += genreRow + '</div>'; // Close the previous row
+                    genreRow = '<div class="genre-row">'; // Start a new row
+                }
+                genreRow += `
+                    <div class="genre-item">
                         <a href="#" onclick="handleGenreClick('${genre.id}')">
                             <img src="${genre.icons[0].url}" alt="${genre.name}">
                             <p>${genre.name}</p>
                         </a>
                     </div>
                 `;
-                genresContainer.innerHTML += genreHTML;
             });
+            genreRowsHTML += genreRow + '</div>'; // Close the last row
+            genresContainer.innerHTML = genreRowsHTML;
         }
 
         function fetchGenres(limit = 10) {
@@ -107,19 +130,65 @@
         function displayRelatedContent(content) {
             var relatedContentContainer = document.getElementById('relatedContent');
             relatedContentContainer.innerHTML = '<h2>Related Content</h2>';
-            content.forEach(item => {
+            var playlistRowsHTML = '';
+            var playlistRow = '<div class="playlist-row">';
+            content.forEach(function(item, index) {
+                if (index % 5 === 0 && index !== 0) {
+                    playlistRowsHTML += playlistRow + '</div>'; // Close the previous row
+                    playlistRow = '<div class="playlist-row">'; // Start a new row
+                }
                 var itemHTML = `
-                    <div>
+                    <div class="playlist-item">
                         <a href="${item.href}" target="_blank">
                             <img src="${item.images[0].url}" alt="${item.name}">
                             <p>${item.name}</p>
                         </a>
                     </div>
                 `;
-                relatedContentContainer.innerHTML += itemHTML;
+                playlistRow += itemHTML;
             });
+            playlistRowsHTML += playlistRow + '</div>'; // Close the last row
+            relatedContentContainer.innerHTML += playlistRowsHTML;
+
+            // Fetch and display recommendations
+            fetchRecommendations();
         }
 
-    </script>
+        function fetchRecommendations() {
+            fetch('https://api.spotify.com/v1/browse/categories/toplists/playlists?limit=5', {
+                headers: {                     'Authorization': 'Bearer ' + accessToken
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            displayRecommendations(data.playlists.items);
+        })
+        .catch(error => console.error('Error fetching recommendations:', error));
+    }
+
+    function displayRecommendations(recommendations) {
+        var relatedContentContainer = document.getElementById('relatedContent');
+        var recommendationHTML = '<h2>Recommendations</h2>';
+        var recommendationRow = '<div class="playlist-row">';
+        recommendations.forEach(function(item, index) {
+            if (index % 5 === 0 && index !== 0) {
+                recommendationHTML += recommendationRow + '</div>'; // Close the previous row
+                recommendationRow = '<div class="playlist-row">'; // Start a new row
+            }
+            var itemHTML = `
+                <div class="recommendation-item">
+                    <a href="${item.href}" target="_blank">
+                        <img src="${item.images[0].url}" alt="${item.name}">
+                        <p>${item.name}</p>
+                    </a>
+                </div>
+            `;
+            recommendationRow += itemHTML;
+        });
+        recommendationHTML += recommendationRow + '</div>'; // Close the last row
+        relatedContentContainer.innerHTML += recommendationHTML;
+    }
+
+</script>
 </body>
 </html>
