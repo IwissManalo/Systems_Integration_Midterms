@@ -9,7 +9,7 @@ from django.http import JsonResponse
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
-client_id = '0e7d735b06ac4782b4f0451ab70d5558'
+client_id = '05d59c5d1f7c45a29a64b751eab4024f'
 redirect_uri = 'http://localhost:8888/callback'
 
 def home(request):

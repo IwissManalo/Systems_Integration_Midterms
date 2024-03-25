@@ -1,62 +1,33 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Musics</title>
-    <style>
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 9999;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0, 0, 0);
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 10% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-        }
-
-        .close {
-            color: #aaaaaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
-        }
-    </style>
+    <title>Music</title>
+    <link href="{% static 'home/css/style.css' %}" rel="stylesheet" />
+    <link rel="shortcut icon" href="{% static 'home/images/logo.png' %}" type="">
 </head>
-<body>
-    <main>
+<body class="centered-content">
+    <main class="centered-content main-content">
+        <button onclick="window.history.back()" class="back-button">Back</button>
+
         <!-- Search form -->
-        <section>
-            <h2>Search for a Song</h2>
-            <form action="{% url 'search_song' %}" method="GET">
-                <input type="text" name="query" placeholder="Enter song title or artist">
-                <button type="submit">Search</button>
+        <section class="search-bar">
+            <h2 class="white-text search-title">Search for a Song</h2>
+            <form action="{% url 'search_song' %}" method="GET" class="search-form">
+                <input type="text" name="query" placeholder="Enter song title or artist" class="search-input">
+                <button type="submit" class="spotify-button">Search</button> <!-- Apply .spotify-button class here -->
             </form>
-        </section>
+            
+            <p class="description">we recommend songs you might know</p>
+        </section>        
 
         {% if not search_results %}
         <!-- Song Recommendations (if no search results) -->
         <section>
-            <h2>Songs you might know</h2>
+            <h2 class="white-text">Songs you might know</h2>
             <div id="song-recommendations">
                 {% for rec in song_recommendations %}
                 <button class="song-button" data-title="{{ rec.title }}" data-image="{{ rec.image_url }}">
@@ -75,7 +46,7 @@
         {% if search_results %}
         <!-- Display search results -->
         <section>
-            <h2>Search Results</h2>
+            <h2 class="white-text">Search Results</h2>
             <div id="search-results">
                 {% for song in search_results %}
                 <button class="song-button" data-title="{{ song.title }}" data-image="{{ song.image_url }}">
@@ -92,7 +63,7 @@
         {% if song_recommendations %}
         <!-- Display Song recommendations -->
         <section>
-            <h2>Song Recommendations</h2>
+            <h2 class="white-text">Song Recommendations</h2>
             <div id="song-recommendations">
                 {% for rec in song_recommendations %}
                 <button class="song-button" data-title="{{ rec.title }}" data-image="{{ rec.image_url }}">
@@ -112,17 +83,18 @@
     <!-- Modal -->
 <div id="songCoverModal" class="modal">
     <center>
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <div class="song-details">
-            <img id="modalImg" src="" alt="Song Cover" class="img-fluid">
-            <div class="song-info">
-                <p id="modalTitle"></p>
-                <p id="modalArtist"></p>
-                <p id="modalDuration"></p>
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="song-details">
+                <img id="modalImg" src="" alt="Song Cover" class="img-fluid">
+                <div class="song-info">
+                    <p id="modalTitle"></p>
+                    <p id="modalArtist"></p>
+                    <p id="modalDuration"></p>
+                </div>
             </div>
         </div>
-    </div></center>
+    </center>
 </div>
 
 <script>
@@ -163,8 +135,13 @@
         }
     };
 </script>
-
-
 </body>
+
+<footer>
+    <img src="{% static 'home/images/logo.png' %}" alt="Logo" class="footer-logo">
+    <p class="footer-text">Powered by InfoTech Alliance</p>
+</footer>
+
+
 </html>
 

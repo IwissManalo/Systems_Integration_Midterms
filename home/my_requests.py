@@ -24,6 +24,6 @@ import requests
 request = requests.post("https://accounts.spotify.com/api/token", 
                        headers={"Content-Type" : "application/x-www-form-urlencoded"},
                        params={"grant_type" : "client_credentials", 
-                               "client_id" : "3132de82b782471494b318c2b40bc45b", 
-                               "client_secret" : "7bebcd3ac9f04ab69c2de188d66d4240"})
+                               "client_id" : "05d59c5d1f7c45a29a64b751eab4024f", 
+                               "client_secret" : "6c473c1be9e8423eaf22efe697e2c2cb"})
 print(request.content)
