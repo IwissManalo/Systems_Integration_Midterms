@@ -25,23 +25,38 @@
         </section>        
 
         {% if not search_results %}
-        <!-- Song Recommendations (if no search results) -->
         <section>
-            <h2 class="white-text">Songs you might know</h2>
-            <div id="song-recommendations">
-                {% for rec in song_recommendations %}
-                <button class="song-button" data-title="{{ rec.title }}" data-image="{{ rec.image_url }}">
-                    {% if rec.image_url %}
-                        <img src="{{ rec.image_url }}" alt="{{ rec.title }}" width="200">
-                    {% endif %}
-                    <p>Title: {{ rec.title }}</p>
-                    <p>Artist: {{ rec.artist }}</p>
-                    <p>Duration: {{ rec.duration }}</p>
-                </button>
-                {% endfor %}
+            <h2 class="white-text">Random Tracks</h2>
+            <div id="random-tracks" class="track-container">
+                {% if random_tracks %}
+                    {% for track in random_tracks %}
+                        <div class="track">
+                            <button class="song-button" data-title="{{ track.name }}" data-image="{{ track.album.images.0.url }}">
+                                <img src="{{ track.album.images.0.url }}" alt="{{ track.name }}" width="100">
+                                <h3>{{ track.name }}</h3>
+                                <p>Artists: {% for artist in track.artists %}{{ artist.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+                                <p>Album: {{ track.album.name }}</p>
+                                {% if track.preview_url %}
+                                    <audio controls>
+                                        <source src="{{ track.preview_url }}" type="audio/mpeg">
+                                        Your browser does not support the audio element.
+                                    </audio>
+                                {% else %}
+                                    <p>No preview available</p>
+                                {% endif %}
+                                <hr>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No random tracks available</p>
+                {% endif %}
             </div>
         </section>
         {% endif %}
+        
+        
+
     
         {% if search_results %}
         <!-- Display search results -->
@@ -64,11 +79,11 @@
         <!-- Display Song recommendations -->
         <section>
             <h2 class="white-text">Song Recommendations</h2>
-            <div id="song-recommendations">
+            <div id="song-recommendations" style="display: flex; flex-wrap: wrap; justify-content: space-between;">
                 {% for rec in song_recommendations %}
-                <button class="song-button" data-title="{{ rec.title }}" data-image="{{ rec.image_url }}">
+                <button class="song-button" data-title="{{ rec.title }}" data-image="{{ rec.image_url }}" style="margin-bottom: 20px;">
                     {% if rec.image_url %}
-                        <img src="{{ rec.image_url }}" alt="{{ rec.title }}" width="200">
+                        <img src="{{ rec.image_url }}" alt="{{ rec.title }}" width="200" style="margin-bottom: 10px;">
                     {% endif %}
                     <p>Title: {{ rec.title }}</p>
                     <p>Artist: {{ rec.artist }}</p>
@@ -77,6 +92,7 @@
                 {% endfor %}
             </div>
         </section>
+        
         {% endif %}
     </main>
 
@@ -144,4 +160,3 @@
 
 
 </html>
-

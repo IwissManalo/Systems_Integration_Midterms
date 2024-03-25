@@ -9,14 +9,21 @@ from django.http import JsonResponse
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
-client_id = '05d59c5d1f7c45a29a64b751eab4024f'
+client_id = '0e7d735b06ac4782b4f0451ab70d5558'
 redirect_uri = 'http://localhost:8888/callback'
 
 def home(request):
     return render(request, 'home/index.html')
 
 def music(request):
-    return render(request, 'home/music.html')
+    # Initialize Spotify client
+    client_credentials_manager = SpotifyClientCredentials(client_id='0e7d735b06ac4782b4f0451ab70d5558', client_secret='b87c959964d348f58566a257f3e53afb')
+    sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+
+    # Fetch random tracks
+    random_tracks = get_random_tracks(sp)
+
+    return render(request, 'home/music.html', {'random_tracks': random_tracks})
 
 def artist(request):
     return render(request, 'home/artist.html')
@@ -46,7 +53,8 @@ def artist(request):
         artist_name = request.GET.get('artist_name', '')
 
         if not artist_name:
-            return render(request, 'home/artist.html', {'error': 'Please provide an artist name'})
+            random_artists = get_random_popular_artists()
+            return render(request, 'home/artist.html', {'random_artists': random_artists})
 
         auth_url = 'https://accounts.spotify.com/api/token'
         client_id = '0e7d735b06ac4782b4f0451ab70d5558'
@@ -77,7 +85,6 @@ def artist(request):
                     data = response.json().get('artists', {}).get('items', [])
 
                     if data:
-                        # Fetch additional details for each artist (including followers count and top tracks)
                         for artist in data:
                             artist_id = artist.get('id')
                             artist_details_url = f"https://api.spotify.com/v1/artists/{artist_id}"
@@ -85,18 +92,16 @@ def artist(request):
                             if artist_details_response.status_code == 200:
                                 artist_details = artist_details_response.json()
                                 artist['followers_count'] = artist_details.get('followers', {}).get('total', 0)
-                                
-                                # Fetch top tracks
                                 top_tracks_url = f"https://api.spotify.com/v1/artists/{artist_id}/top-tracks?country=US"
                                 top_tracks_response = requests.get(top_tracks_url, headers=headers)
                                 if top_tracks_response.status_code == 200:
                                     top_tracks_data = top_tracks_response.json().get('tracks', [])
                                     artist['top_tracks'] = [{'name': track['name'], 'image_url': track['album']['images'][0]['url'] if track['album']['images'] else None} for track in top_tracks_data]
                                 else:
-                                    artist['top_tracks'] = []  # If unable to fetch top tracks, set to empty list
+                                    artist['top_tracks'] = []
                             else:
                                 artist['followers_count'] = 0
-                                artist['top_tracks'] = []  # If unable to fetch top tracks, set to empty list
+                                artist['top_tracks'] = []
                         return render(request, 'home/artist.html', {'data': data})
                     else:
                         return render(request, 'home/artist.html', {'error': 'No matching artists found'})
@@ -108,9 +113,50 @@ def artist(request):
             return render(request, 'home/artist.html', {'error': 'Failed to authenticate with Spotify API'})
     else:
         return render(request, 'home/artist.html', {'error': 'Invalid request method'})
-    
-    
 
+def get_random_popular_artists():
+    client_credentials_manager = SpotifyClientCredentials(client_id='0e7d735b06ac4782b4f0451ab70d5558', client_secret='b87c959964d348f58566a257f3e53afb')
+    sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+
+    genres = ['pop', 'rock', 'hip hop', 'electronic']
+    random_artists = []
+
+    for genre in genres:
+        results = sp.search(q=f'genre:"{genre}"', type='artist', limit=20)  # Increased limit for better randomization
+        if results and 'artists' in results and 'items' in results['artists']:
+            artists = results['artists']['items']
+            random.shuffle(artists)  # Shuffle the artists list
+            for artist in artists:
+                if len(random_artists) >= 5:  # Check if we already have 5 artists
+                    break  # Exit the loop if we have 5 artists
+                artist_id = artist['id']
+                artist_details = sp.artist(artist_id)
+                random_artist_data = {
+                    'name': artist_details['name'],
+                    'followers_count': artist_details['followers']['total'],
+                    'genres': artist_details['genres'],
+                    'image_url': artist_details['images'][0]['url'] if artist_details['images'] else None,
+                    'top_tracks': get_artist_top_tracks(artist_id)
+                }
+                random_artists.append(random_artist_data)
+    
+    return random_artists
+
+def get_artist_top_tracks(artist_id):
+    client_credentials_manager = SpotifyClientCredentials(client_id='0e7d735b06ac4782b4f0451ab70d5558', client_secret='b87c959964d348f58566a257f3e53afb')
+    sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+
+    results = sp.artist_top_tracks(artist_id)
+    
+    top_tracks = []
+    for track in results['tracks']:
+        top_tracks.append({
+            'name': track['name'],
+            'image_url': track['album']['images'][0]['url'] if track['album']['images'] else None
+        })
+    
+    return top_tracks
+    
 def search_song(request):
     if request.method == 'GET':
         query = request.GET.get('query', '')
@@ -158,7 +204,7 @@ def get_recommendations(track_id):
     sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
     # Get recommendations based on the track (linimit ko lang to 5)
-    recommendations = sp.recommendations(seed_tracks=[track_id], limit=5)
+    recommendations = sp.recommendations(seed_tracks=[track_id], limit=10)
 
     # Extract relevant information from the recommendations including image URLs
     song_recommendations = []
@@ -174,3 +220,18 @@ def get_recommendations(track_id):
         })
 
     return song_recommendations
+
+def get_random_tracks(sp):
+    # Define genres for random track search
+    genres = ['pop', 'rock', 'hip hop', 'electronic']
+    random_tracks = []
+
+    # Iterate through genres and fetch random tracks
+    for genre in genres:
+        results = sp.search(q=f'genre:"{genre}"', type='track', limit=5)
+        if results and 'tracks' in results and 'items' in results['tracks']:
+            tracks = results['tracks']['items']
+            random.shuffle(tracks)
+            random_tracks.extend(tracks[:2])  # Choose 2 random tracks from each genre
+    
+    return random_tracks

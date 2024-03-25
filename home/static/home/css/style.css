@@ -180,6 +180,32 @@ body {
   font-size: 35px;
 }
 
+.track-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.track {
+  width: 30%; /* Adjust width as needed */
+  margin-bottom: 20px; /* Adjust margin as needed */
+}
+
+/* Adjust the width of each track in responsive layout */
+@media (max-width: 768px) {
+  .track {
+      width: 45%; /* Adjust for smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .track {
+      width: 100%; /* Full width on smaller screens */
+  }
+}
+
+/* ARTIST SECTION */
+
 .artist-container {
   display: flex;
   flex-wrap: wrap;
