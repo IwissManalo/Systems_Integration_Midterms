@@ -180,5 +180,56 @@ body {
   font-size: 35px;
 }
 
+.artist-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  list-style: none;
+  padding: 0;
+}
+
+.artist-item {
+  width: 48%;
+  margin-bottom: 20px;
+}
+
+.artist-info {
+  display: flex;
+  background-color: #535353;
+}
 
 
+.artist-image {
+  width: 230px; 
+  height: auto;
+  margin-right: 20px;
+  display: block;
+}
+
+.artist-details {
+  text-align: left;
+}
+
+.top-tracks {
+  width: 48%;
+}
+
+.track-list {
+  text-align: left;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  margin-top: 20px;
+}
+
+.track-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-right: 20px;
+}
+
+.track-image {
+  width: 110px;
+  height: auto;
+  margin-bottom: 10px;
+}

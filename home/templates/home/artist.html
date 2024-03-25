@@ -1,87 +1,72 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spotify Midterms</title>
+    <title>Artist</title>
     <link href="{% static 'home/css/style.css' %}" rel="stylesheet" />
     <link rel="shortcut icon" href="{% static 'home/images/logo.png' %}" type="">
-   
 </head>
-<body>
+<body class="white-text">
+    <main class="centered-content main-content">
+        <a href="{% url 'home' %}" class="back-button">Back</a>
 
         <div>
-            <ul>
-            
-                <li>
-                    <form id="searchForm" action="{% url 'artist' %}" method="GET">
-                        {% csrf_token %}
-                        <input id="searchInput" type="text" name="artist_name" placeholder="Search artist">
-                        <button type="submit"><span class="fa fa-search"></span> <span>Search</span></button>
-                    </form>
-                </li>
+            <h2 class="white-text search-title">Search for an Artist</h2>
+            <form id="searchForm" action="{% url 'artist' %}" method="GET">
+                {% csrf_token %}
+                <input id="searchInput" type="text" name="artist_name" placeholder="Search artist" class="search-input">
+                <button type="submit" class="spotify-button">Search</button>
+            </form>
         </div>
-      
+
+        <div style="margin-bottom: 25px;"></div>
 
         <!-- artist.html -->
-<div>
-    <div {% if data %} style="display: block;"{% endif %}>
-        {% if data %}
-            <div>
-                <ul>
-                    {% for artist in data %}
-                        <li>
-                            <div>
-                                <a href="#" onclick="showArtistDetails('{{ artist.id }}'); return false;">
-                                    {% if artist.images %}
-                                        <img src="{{ artist.images.0.url }}" alt="{{ artist.name }}">
-                                    {% else %}
-                                        <img src="{% static 'home/images/default-artist.jpg' %}" alt="{{ artist.name }}">
-                                    {% endif %}
-                                    <div>
-                                        <span class="fa fa-play"></span>
-                                    </div>
-                                    <div>
-                                        <h4>{{ artist.name }}</h4>
-                                        <p>Followers: {{ artist.followers_count }}</p>
-                                        <p>Popularity: {{ artist.popularity }}</p>
-                                        <p>Genres: {{ artist.genres|join:", " }}</p>
-                                        <!-- Add a section for top tracks -->
-                                        <div>
-                                            <h4>Top Tracks:</h4>
-                                            <ul>
-                                                {% for track in artist.top_tracks %}
-                                                    <li>
-                                                        {% if track.image_url %}
-                                                            <img src="{{ track.image_url }}" alt="{{ track.name }}" style="float:left; margin-right:10px;" width="50">
-                                                        {% else %}
-                                                            <img src="{% static 'home/images/default-track.jpg' %}" alt="{{ track.name }}" style="float:left; margin-right:10px;" width="50">
-                                                        {% endif %}
-                                                        <div>{{ track.name }}</div>
-                                                        <div style="clear:both;"></div> <!-- Clear float -->
-                                                    </li>
-                                                {% endfor %}
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </a>
+        <div class="artist-container">
+            {% if data %}
+                {% for artist in data %}
+                    <div class="artist-item">
+                        <div class="artist-info">
+                            <a href="#" onclick="showArtistDetails('{{ artist.id }}'); return false;">
+                                {% if artist.images %}
+                                    <img src="{{ artist.images.0.url }}" alt="{{ artist.name }}" class="artist-image">
+                                {% else %}
+                                    <img src="{% static 'home/images/default-artist.jpg' %}" alt="{{ artist.name }}" class="artist-image">
+                                {% endif %}
+                            </a>
+                            <div class="artist-details">
+                                <h4>{{ artist.name }}</h4>
+                                <p class="artist-followers">Followers: {{ artist.followers_count }}</p>
+                                <p class="artist-popularity">Popularity: {{ artist.popularity }}</p>
+                                <p class="artist-genres">Genres: {{ artist.genres|join:", " }}</p>
                             </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        {% else %}
-            <div>
-                <p>No results found.</p>
-            </div>
-        {% endif %}
-    </div>
-</div>
-
-
-
+                        </div>
+                        <div class="top-tracks">
+                            <h4 style="text-align: left;">Top Tracks</h4>
+                            <div class="track-list">
+                                {% for track in artist.top_tracks %}
+                                    <div class="track-item">
+                                        {% if track.image_url %}
+                                            <img src="{{ track.image_url }}" alt="{{ track.name }}" class="track-image">
+                                        {% else %}
+                                            <img src="{% static 'home/images/default-track.jpg' %}" alt="{{ track.name }}" class="track-image">
+                                        {% endif %}
+                                        <span>{{ track.name }}</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div>
+                    <p>No results found.</p>
+                </div>
+            {% endif %}
+        </div>
+    </main>
 
     <script src="https://kit.fontawesome.com/23cecef777.js" crossorigin="anonymous"></script>
     <script>
@@ -96,8 +81,8 @@
             .then(response => response.json())
             .then(data => {
                 // Update HTML elements with artist details
-                document.getElementById(`followers_${artistId}`).innerText = `Followers: ${data.followers.total}`;
-                document.getElementById(`popularity_${artistId}`).innerText = `Popularity: ${data.popularity}`;
+                document.querySelector(`.artist-followers`).innerText = `Followers: ${data.followers.total}`;
+                document.querySelector(`.artist-popularity`).innerText = `Popularity: ${data.popularity}`;
                 // Fetch genres separately
                 fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
                     method: 'GET',
@@ -108,7 +93,7 @@
                 .then(response => response.json())
                 .then(data => {
                     // Update HTML element with genres
-                    document.getElementById(`genres_${artistId}`).innerText = `Genres: ${data.genres.join(', ')}`;
+                    document.querySelector(`.artist-genres`).innerText = `Genres: ${data.genres.join(', ')}`;
                 })
                 .catch(error => {
                     console.error('Error fetching artist genres:', error);
@@ -119,5 +104,10 @@
             });
         }
     </script>
+
+    <footer>
+        <img src="{% static 'home/images/logo.png' %}" alt="Logo" class="footer-logo">
+        <p class="footer-text">Powered by InfoTech Alliance</p>
+    </footer>
 </body>
 </html>

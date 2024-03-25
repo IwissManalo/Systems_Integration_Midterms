@@ -11,13 +11,13 @@
 </head>
 <body class="centered-content">
     <main class="centered-content main-content">
-        <button onclick="window.history.back()" class="back-button">Back</button>
+        <a href="{% url 'home' %}" class="back-button">Back</a>
 
         <!-- Search form -->
         <section class="search-bar">
             <h2 class="white-text search-title">Search for a Song</h2>
             <form action="{% url 'search_song' %}" method="GET" class="search-form">
-                <input type="text" name="query" placeholder="Enter song title or artist" class="search-input">
+                <input type="text" name="query" placeholder="Enter song title" class="search-input">
                 <button type="submit" class="spotify-button">Search</button> <!-- Apply .spotify-button class here -->
             </form>
             
