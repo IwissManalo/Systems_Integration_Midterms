@@ -1,9 +1,13 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genres</title>
+    <link rel="shortcut icon" href="{% static 'home/images/logo.png' %}" type="">
+
     <style>
         .genre-row, .playlist-row {
             display: flex;
@@ -35,7 +39,7 @@
     <div id="relatedContent"></div>
 
     <script>
-        var accessToken = "BQBqgegxgedfCOiEJWrktbeRZVKtJHkwtOoqfY7ttjTY169nmI7zJNA7X8FAiCsmLdttwycnKYaa_wYi26puh7FWPyudY1qpWbE_3UVvN8xObXdblog-hafxDHUDG4-JiZwtX9_DyeAvzJrC7wlWBWug7pusJgszv38Kofo";
+        var accessToken = "BQCaoWg17uJpNe998A70aAs7yQ8y28mdWAFoiiDQ4QXlHJfqqYQkQZyrkd_xx8HDAPvOuFwvXx51NFGwtAaeWB5dnGDYR--a4eTH6yKQw9oXBrIOs7o";
 
         var isSearchPerformed = false;
 
@@ -64,6 +68,7 @@
 
         function fetchGenres(limit = 10) {
             fetch('https://api.spotify.com/v1/browse/categories?limit=' + limit, {
+                
                 headers: {
                     'Authorization': 'Bearer ' + accessToken
                 }
@@ -204,4 +209,3 @@
     </script>
 </body>
 </html>
-
