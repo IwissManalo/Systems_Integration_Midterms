@@ -22,39 +22,43 @@
         </div>
         <div>
             <h2>Popular Artists</h2>
-            <ul>
+            <div class="artist-container">
                 {% for artist in random_artists %}
-                <li>
-                    <div>
-                        {% if artist.image_url %}
-                        <img src="{{ artist.image_url }}" alt="{{ artist.name }}">
-                        {% else %}
-                        <img src="{% static 'home/images/default-artist.jpg' %}" alt="{{ artist.name }}">
-                        {% endif %}
-                        <h3>{{ artist.name }}</h3>
-                        <p>Followers: {{ artist.followers_count }}</p>
-                        <p>Genres: {{ artist.genres|join:", " }}</p>
-                        <div>
-                            <h4>Top Tracks:</h4>
-                            <ul>
+                    <div class="artist-item">
+                        <div class="artist-info">
+                            <a href="#" onclick="showArtistDetails('{{ artist.id }}'); return false;">
+                                {% if artist.image_url %}
+                                    <img src="{{ artist.image_url }}" alt="{{ artist.name }}" class="artist-image">
+                                {% else %}
+                                    <img src="{% static 'home/images/default-artist.jpg' %}" alt="{{ artist.name }}" class="artist-image">
+                                {% endif %}
+                            </a>
+                            <div class="artist-details">
+                                <h4>{{ artist.name }}</h4>
+                                <p class="artist-followers">Followers: {{ artist.followers_count }}</p>
+                                <!-- Add other relevant artist details here -->
+                            </div>
+                        </div>
+                        <div class="top-tracks">
+                            <h4 style="text-align: left;">Top Tracks</h4>
+                            <div class="track-list">
                                 {% for track in artist.top_tracks %}
-                                <li>
-                                    {% if track.image_url %}
-                                    <img src="{{ track.image_url }}" alt="{{ track.name }}" style="float:left; margin-right:10px;" width="50">
-                                    {% else %}
-                                    <img src="{% static 'home/images/default-track.jpg' %}" alt="{{ track.name }}" style="float:left; margin-right:10px;" width="50">
-                                    {% endif %}
-                                    <div>{{ track.name }}</div>
-                                    <div style="clear:both;"></div> <!-- Clear float -->
-                                </li>
+                                    <div class="track-item">
+                                        {% if track.image_url %}
+                                            <img src="{{ track.image_url }}" alt="{{ track.name }}" class="track-image">
+                                        {% else %}
+                                            <img src="{% static 'home/images/default-track.jpg' %}" alt="{{ track.name }}" class="track-image">
+                                        {% endif %}
+                                        <span>{{ track.name }}</span>
+                                    </div>
                                 {% endfor %}
-                            </ul>
+                            </div>
                         </div>
                     </div>
-                </li>
                 {% endfor %}
-            </ul>
+            </div>
         </div>
+        
 
         <div style="margin-bottom: 25px;"></div>
 
@@ -96,9 +100,6 @@
                     </div>
                 {% endfor %}
             {% else %}
-                <div>
-                    <p>No results found.</p>
-                </div>
             {% endif %}
         </div>
     </main>
